@@ -1,0 +1,256 @@
+const path = require('path');
+const http = require('http');
+const express = require('express');
+const socketio = require('socket.io');
+//const formatMessage = require('./utils/messages');
+const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
+app.use(express.static(path.join(__dirname, 'public')));
+console.clear();
+
+//========================================================================================
+io.on('connection',(socket) =>{
+    const Demomessage ={
+        "type":"Radio",
+        "Data":"",
+        "size":3,
+        "Data1":"I need basic fitness knowledge. Don't know where to start",
+        "DataValue1":"I need basic fitness knowledge. Don't know where to start",
+        "Data2":"I think im skinny fat.",
+        "DataValue2":"I think im skinny fat.",
+        "Data3":"I have completed my fat-loss goal. what should I do now ? ",
+        "DataValue3":"I have completed my fat-loss goal. what should I do now ? ",
+    }
+    console.log(socket.id)
+    socket.on('connect',()=>{
+        console.log(socket.id)
+    });
+    // listen for messages
+    socket.on('chatMessage',(msg)=>{
+        if(msg=="I want to improve my fitness knowledge. Recommend me some sources"){
+            socket.emit('chatMessage',{ type:'Message',Data:"https://www.youtube.com/c/JeffNippard \n https://www.youtube.com/c/MindPumpRadio"});
+        }
+        else if(msg=="I think im skinny fat"){
+            socket.emit('chatMessage',{
+                "type":'Radio',
+                "Data":"Do you think you have more fat around your belly/waist while you have flabby arms or weak muscles ?",
+                "size":2,
+                "Data1":"yes I think im skinny fat",
+                "DataValue1":"yes",
+                "Data2":"no I think im not skinny fat",
+                "DataValue2":"no ",
+            });
+        }
+        else if(msg=="I have complete fitness goal. What to do now"){
+            socket.emit('chatMessage',{
+                "type":'Radio',
+                "Data":"Do you want to maintain your physique or gain a more muscular yet leaner look?",
+                "size":2,
+                "Data1":"Maintain a decent physique",
+                "DataValue1":"Maintain a decent physique",
+                "Data2":"Achieve a more muscular look",
+                "DataValue2":"Achieve a more muscular look",
+            });
+
+        }
+        else if(msg=="I want to improve overall general health"){
+            socket.emit('chatMessage',{ type:'Recommend',text:  'We recommend the following training approach for this:-',
+                data: [
+                    {
+                        tipKey:'0',
+                        tip: 'Choose maintenance as your goal',
+                    },
+                    {
+                        tipKey:'1',
+                        tip: 'If you feel you are obese, we recommend a fat-loss goal',
+                    },
+                    {
+                        tipKey:'2',
+                        tip: 'If you feel skinny and don’t have much muscle mass already, we recommend you proceed on a muscle-gain goal.',
+                    },{
+                        tipKey:'3',
+                        tip: 'Do Resistance Training at-least 3-4 days a week',
+                    },{
+                        tipKey:'4',
+                        tip: 'Try to take 10,000 steps a day',
+                    }
+                ],  })
+        }
+        else if(msg=="I have a history of dieting and I can't go any lower on calories"){
+            // socket.emit('chatMessage',{ type:'Message',Data:"Are you experiencing any one symptom out of the following? \n 1) Are you failing to lose weight although you are eating very low calories? \n 2) Are you eating miserably low calories just to prevent weight gain? \n 3) Are you on very low calories and have stopped seeing any further progress? \n4) Do you frequently indulge in binge eating and feel you have destroyed your progress?"});
+            socket.emit('chatMessage',{
+                "type":'Radio',
+                "Data":"Are you experiencing any one symptom out of the following? \n 1) Are you failing to lose weight although you are eating very low calories? \n 2) Are you eating miserably low calories just to prevent weight gain? \n 3) Are you on very low calories and have stopped seeing any further progress? \n 4) Do you frequently indulge in binge eating and feel you have destroyed your progress?",
+                "size":2,
+                "Data1":"Yes I am",
+                "DataValue1":"Yes I am",
+                "Data2":"No I am not",
+                "DataValue2":"No I am not",
+            });
+        }
+
+
+        ///==============================================
+        else if(msg=="yes I think im skinny fat"){
+            socket.emit('chatMessage',{ type:'Photo',text:  'Please select how you look like',data: [
+                    {
+                        title: 'Skinny Fat person 1',
+                        image:'https://befitkilleen.com/wp-content/uploads/2015/12/BodyType11.jpg'
+                    },
+                    {
+                        title: 'Skinny Fat person 2',
+                        image:'https://i2.wp.com/bonytobombshell.com/wp-content/uploads/2021/09/skinny-fat-workout-and-diet-guide-for-women.jpg?w=1260&ssl=1'
+                    },
+                    // https://bonytobeastly.com/wp-content/uploads/2020/09/how-to-know-if-you-are-skinny-1024x584.jpg
+                    {
+                        title: 'Skinny Fat person 3',
+                        image:'https://bonytobeastly.com/wp-content/uploads/2020/09/how-to-know-if-you-are-skinny-1024x584.jpg'
+                    },
+                ],  })
+
+
+        }
+        else if(msg=="Skinny Fat person 1" || msg=="Skinny Fat person 2"  ){
+            socket.emit('chatMessage',{ type:'Recommend',text:  'We recommend the following training approach for this:-',
+                data: [
+                    {
+                        tipKey:'0',
+                        tip: 'Choose “maintenance” as your goal and hit the gym 3-5 days per week',
+                    },
+                    {
+                        tipKey:'1',
+                        tip: 'Do this maintenance phase for 4-6 weeks',
+                    },
+                    {
+                        tipKey:'2',
+                        tip: 'After completion, change goal to “muscle gain” and bulk up for 4-6 weeks',
+                    },{
+                        tipKey:'3',
+                        tip: 'Switch back to maintenance for 2 weeks so your metabolism may adjust',
+                    },{
+                        tipKey:'4',
+                        tip: 'After this, change your goal to “fat-loss” and proceed for 4 weeks',
+                    },{
+                        tipKey:'5',
+                        tip: 'Keep repeating the above mentioned steps until you see improvement in your physique',
+                    }
+                ],  })
+        }
+        else if(msg=="Skinny Fat person 3"){
+            socket.emit('chatMessage',{ type:'Message',Data:"Please follow regular diet"});
+
+        }
+        else if(msg=="no I think im not skinny fat"){
+            socket.emit('chatMessage',{ type:'Message',Data:"Please follow regular diet"});
+        }
+        //=========================================================
+        else if(msg=="Maintain a decent physique" ){
+            socket.emit('chatMessage',{ type:'Recommend',text:  'We recommend the following training approach for this:-',
+                data: [
+                    {
+                        tipKey:'0',
+                        tip: 'Choose “maintenance” as your goal and stay on it for 5-6 weeks.',
+                    },
+                    {
+                        tipKey:'1',
+                        tip: 'Allow your body to rest and de-stress . Indulge in activities you enjoy physically and mentally',
+                    },
+                    {
+                        tipKey:'2',
+                        tip: 'Allow your body to rest and de-stress . Indulge in activities you enjoy physically and mentally',
+                    },{
+                        tipKey:'3',
+                        tip: 'Switch back to maintenance for 2 weeks so your metabolism may adjust',
+                    },{
+                        tipKey:'4',
+                        tip: 'Maintain a decent activity level by taking regular walks or playing any sports you like',
+                    },{
+                        tipKey:'5',
+                        tip: 'If you want, you may proceed with a muscle gain goal after completing 5-6 weeks of maintenance phase',
+                    }
+                ],  })
+        }
+        else if(msg=="Achieve a more muscular look"){
+            socket.emit('chatMessage',{
+                "type":'Radio',
+                "Data":"What is your body fat % ",
+                "size":2, 
+                "Data1":"Less then 14%",
+                "DataValue1":"Less then 14%",
+                "Data2":"more then 14%", 
+                "DataValue2":"more then 14%",
+            });
+
+        }
+        else if(msg=="Less then 14%"){
+            socket.emit('chatMessage',{ type:'Message',Data:"Simply choose “muscle gain” as goal"});
+        }
+        else if(msg=="more then 14%"){
+            socket.emit('chatMessage',{ type:'Message',Data:"We recommend you go on a fatloss phase until your bodyfat percentage is around 14 percent. Then proceed with a muscle gain phase"});
+
+        }
+        //===========================================================
+        else if(msg=="Yes I am"){
+            socket.emit('chatMessage',{ type:'Recommend',text:  'We recommend the following training approach for this:-',
+                data: [
+                    {
+                        tipKey:'0',
+                        tip: 'In this case we recommend you proceed on a “REVERSE DIET”. Keep in mind that during this reverse diet phase you will gain some weight but that is necessary to heal your metabolism. Read more at:-\n' +
+                            'https://www.avatarnutrition.com/blog/reverse-dieting/the-ultimate-guide-to-reverse-dieting',
+                    },
+                    {
+                        tipKey:'1',
+                        tip: 'Simply change your goal to maintenance and stay on it for two weeks',
+                    },
+                    {
+                        tipKey:'2',
+                        tip: 'Then, change your goal to "muscle gain".',
+                    },{
+                        tipKey:'3',
+                        tip: 'Stay on it for at-least 12 weeks to let your metabolism heal',
+                    },{
+                        tipKey:'4',
+                        tip: 'Change your goal back to maintenance for another two weeks',
+                    },{
+                        tipKey:'5',
+                        tip: 'After that, if you feel there is plenty of room to drop weight, proceed with your fat-loss goal',
+                    }
+                ],  })
+
+        }
+        else if(msg=="No I am not"){
+            socket.emit('chatMessage',{ type:'Recommend',text:  'If you are feeling tired and fatigued due to , we suggest you take a diet break',
+                data: [
+                    {
+                        tipKey:'0',
+                        tip: 'Change your goal to maintenance',
+                    },
+                    {
+                        tipKey:'1',
+                        tip: 'Enjoy the extra calories for a week or two',
+                    },
+                    {
+                        tipKey:'2',
+                        tip: 'When you feel mentally relaxed, change your goal back to fat loss and proceed.',
+                    }
+                ],  })
+        }
+
+        else{
+            socket.emit('chatMessage',{ type:'Message',Data:msg});
+
+
+        }
+
+        //==================================================================================
+
+    });
+});
+
+// Server start
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+//===================================================================================================================================
+console.log(`  Query: ${result.queryText}`);
+console.log(`  Response: ${result.fulfillmentText}`);
